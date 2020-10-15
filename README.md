@@ -7,7 +7,9 @@ Docker: https://docs.docker.com/get-docker/
 ## Credentials
 Use aws-azure-login cli or the provided credentials
 ## Overview on ECS
-Add docs
+AWS workshop: https://ecsworkshop.com/introduction/ecs_basics/
+
+Internal Wiki: 
 ## Clone the repository
 ```shell
 git clone https://github.com/searchmetrics/ecs-workshop.git
@@ -172,7 +174,7 @@ First we need to create target group for our service:
 ```shell
 aws elbv2 create-target-group --name workshop-<name>  --protocol HTTP --port 80 --target-type instance --health-check-interval-seconds 10 --health-check-timeout-seconds 5 --healthy-threshold-count 2 --vpc-id <vpc_id>
 ```
-> *vpc_id* will be provided by the host
+> *vpc_id* will be provided by the meeting host
 
 
 This will generate an output like the following:
