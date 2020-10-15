@@ -8,6 +8,11 @@ Docker: https://docs.docker.com/get-docker/
 Use aws-azure-login cli or the provided credentials
 ## Overview on ECS
 Add docs
+## Clone the repository
+```shell
+git clone https://github.com/searchmetrics/ecs-workshop.git
+cd ecs-workshop
+```
 ### Checkout the running cluster
 Brief on ASG and Spot.io options
 ## Create ECR
