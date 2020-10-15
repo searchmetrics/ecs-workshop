@@ -1,0 +1,24 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "nginx",
+      "image": "<repositoryUri>",
+      "cpu": 0,
+      "memory": 128,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 0,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "SMWORKSHOP",
+          "value": "<name>"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+[
+    {
+        "Field": "host-header",
+        "HostHeaderConfig": {
+            "Values": ["<REPLACE>.ecs.src.hm"]
+        }
+    }
+]
