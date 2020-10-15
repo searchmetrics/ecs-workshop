@@ -245,3 +245,6 @@ sudo docker logs <container_id>
 ```
 You can access the service url and generate some 404 requests http://name.ecs.src.hm/error, you will notice new events.
 
+## Metrics
+
+Lets go through the metrics that ECS offers 
