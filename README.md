@@ -65,7 +65,7 @@ To create the task definition, first lets edit the file simple-task.json and rep
 ```
 Once this is complete, we can create the task definition with the following command:
 ```shell
-aws ecs register-task-definition --family workspace-<name>  --cli-input-json file://simple-task.json
+aws ecs register-task-definition --family workshop-<name>  --cli-input-json file://simple-task.json
 ```
 >Replace <name> with your name.
 
@@ -73,7 +73,7 @@ This will produce an output similar to this one:
 ```shell
 {
     "taskDefinition": {
-        "taskDefinitionArn": "arn:aws:ecs:eu-west-1:123456789000:task-definition/workspace-mls:1",
+        "taskDefinitionArn": "arn:aws:ecs:eu-west-1:123456789000:task-definition/workshop-mls:1",
         "containerDefinitions": [
             {
                 "name": "nginx",
@@ -93,7 +93,7 @@ This will produce an output similar to this one:
                 "volumesFrom": []
             }
         ],
-        "family": "workspace-mls",
+        "family": "workshop-mls",
         "revision": 1,
         "volumes": [],
         "status": "ACTIVE",
@@ -104,7 +104,7 @@ This will produce an output similar to this one:
     }
 }
 ```
-Please take a note of the taskDefinitionArn, in the case above is **arn:aws:ecs:eu-west-1:123456789000:task-definition/workspace-mls:1**.
+Please take a note of the taskDefinitionArn, in the case above is **arn:aws:ecs:eu-west-1:123456789000:task-definition/workshop-mls:1**.
 
 Now, lets run the task definition as a simple task in our cluster:
 ```shell
@@ -143,7 +143,7 @@ This time, lets edit the file withvars-task.json, once again replace the image v
 ```
 Then we can register our new task, get the new taskDefinitionArn and execute the run-task command again with the new file:
 ```shell
-aws ecs register-task-definition --family workspace-<name>  --cli-input-json file://simple-task.json
+aws ecs register-task-definition --family workshop-<name>  --cli-input-json file://simple-task.json
 ```
 > Note that the task arn have a number increment
 
@@ -157,7 +157,7 @@ Now lets create an ecs service to manage our task lifecycle.
 
 First step, lets create the task:
 ```shell
-aws ecs create-service --cluster ecs-workshop --desired-count 1 --service-name workspace-<name> --task-definition <taskDefinitionArn>  
+aws ecs create-service --cluster ecs-workshop --desired-count 1 --service-name workshop-<name> --task-definition <taskDefinitionArn>  
 ```
 Here we can check and discuss the main differences from scheduling the container using Service x stand alone task.
 ### Attach to LB
@@ -214,21 +214,34 @@ Then we can create the listener rule by running the command below:
 aws elbv2 create-rule --listener-arn <listener_arn> --priority <priority> --conditions file://conditions-host.json --actions Type=forward,TargetGroupArn=<TargetGroupArn>
 ```
 > *listener_arn* will be provided by the host
+> 
 > *priority* should be different among the participants
+> 
 > Replace <TargetGroupArn> with the one previously created
 
 Once you have prepared the target group and the listener rule, we can recreate our service. First, lets delete the previous service:
 ```shell
-aws ecs delete-service --cluster ecs-workshop --force --service-name workspace-<name>
+aws ecs delete-service --cluster ecs-workshop --force --service workshop-<name>
 ```
 Now lets recreate the service with loadbalancer support:
 ```shell
-aws ecs create-service --cluster ecs-workshop --desired-count 1 --service-name workspace-<name> --task-definition <taskDefinitionArn> --load-balancers targetGroupArn=<TargetGroupArn>,loadBalancerName=<lb_name>,containerName=nginx,containerPort=80
+aws ecs create-service --cluster ecs-workshop --desired-count 1 --service-name workshop-<name> --task-definition <taskDefinitionArn> --load-balancers targetGroupArn=<TargetGroupArn>,containerName=nginx,containerPort=80
 ```
-> *lb_name* will be provided by the host
 > Replace <TargetGroupArn> with the one previously created
 
 Now you can access your service at http://name.ecs.src.hm
 ## Access the instance
-## See logs
-## Send logs to Datadog
+This is a visual part where we use AWS SSM session manager through the ec2 console to connect to the instance.
+## See logs and exec into the container
+To view logs, we have many options, from plain docker logs, to cloudwatch or datadog. Here we will discuss the possibilities and get logs from the instance access. 
+
+After access the instance using AWS SSM session manager, we can run the following commangs:
+```shell
+sudo docker ps | grep <name>
+```
+This will give you all runing containers with your name, where you can use one of the containers id to get logs:
+```shell
+sudo docker logs <container_id>
+```
+You can access the service url and generate some 404 requests http://name.ecs.src.hm/error, you will notice new events.
+
